@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Online Signal Modulator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- ===== CSS ===== -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+        }
+
+        .controls label {
+            display: block;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        input[type="range"] {
+            width: 300px;
+        }
+
+        canvas {
+            background: #ffffff;
+            border: 1px solid #333;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Онлайн модулятор сигнала</h1>
+
+<div class="controls">
+    <label>
+        Частота (Hz):
+        <input type="range" id="frequency" min="1" max="20" value="5">
+        <span id="freqValue">5</span>
+    </label>
+
+    <label>
+        Амплитуда:
+        <input type="range" id="amplitude" min="10" max="100" value="50">
+        <span id="ampValue">50</span>
+    </label>
+</div>
+
+<canvas id="canvas" width="800" height="300"></canvas>
+
+<!-- ===== JavaScript ===== -->
+<script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    const freqSlider = document.getElementById("frequency");
+    const ampSlider = document.getElementById("amplitude");
+    const freqValue = document.getElementById("freqValue");
+    const ampValue = document.getElementById("ampValue");
+
+    let frequency = parseInt(freqSlider.value);
+    let amplitude = parseInt(ampSlider.value);
+
+    freqSlider.oninput = () => {
+        frequency = parseInt(freqSlider.value);
+        freqValue.textContent = frequency;
+    };
+
+    ampSlider.oninput = () => {
+        amplitude = parseInt(ampSlider.value);
+        ampValue.textContent = amplitude;
+    };
+
+    function drawSignal() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.beginPath();
+
+        ctx.moveTo(0, canvas.height / 2);
+
+        for (let x = 0; x < canvas.width; x++) {
+            const y =
+                canvas.height / 2 +
+                amplitude * Math.sin(2 * Math.PI * frequency * x / canvas.width);
+            ctx.lineTo(x, y);
+        }
+
+        ctx.strokeStyle = "#007bff";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        requestAnimationFrame(drawSignal);
+    }
+
+    drawSignal();
+</script>
+
+</body>
+</html>
